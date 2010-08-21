@@ -76,8 +76,8 @@ module Test::Unit::Assertions
   # headings.
   #
   def juxtapose(h1, s1, h2, s2)
-    s1 = s1.map{|line| line.chomp}
-    s2 = s2.map{|line| line.chomp}
+    s1 = [].instance_eval { s1.lines { |line| self << line }; self }
+    s2 = [].instance_eval { s2.lines { |line| self << line }; self }
     rows = [s1.length, s2.length].max
     wl = s1.map{|line| line.length}.max
     wr = s2.map{|line| line.length}.max

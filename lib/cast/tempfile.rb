@@ -7,6 +7,7 @@
 
 require 'delegate'
 require 'tmpdir'
+require 'thread'
 
 # A class for managing temporary files.  This library is written to be
 # thread safe.
@@ -14,6 +15,7 @@ module C
   class Tempfile < DelegateClass(File)
     MAX_TRY = 10
     @@cleanlist = []
+    @@lock = Mutex.new
 
     # Creates a temporary file of mode 0600 in the temporary directory
     # whose name is basename.pid.n.suffix and opens with mode "w+".  A
@@ -28,27 +30,25 @@ module C
         tmpdir = '/tmp'
       end
 
-      lock = nil
+      lock = tmpname = nil
       n = failure = 0
       
-      begin
-        Thread.critical = true
-
+      @@lock.synchronize {
         begin
-          tmpname = File.join(tmpdir, make_tmpname(basename, n, suffix))
-          lock = tmpname + '.lock'
-          n += 1
-        end while @@cleanlist.include?(tmpname) or
-          File.exist?(lock) or File.exist?(tmpname)
+          begin
+            tmpname = File.join(tmpdir, make_tmpname(basename, n, suffix))
+            lock = tmpname + '.lock'
+            n += 1
+          end while @@cleanlist.include?(tmpname) or
+            File.exist?(lock) or File.exist?(tmpname)
 
-        Dir.mkdir(lock)
-      rescue
-        failure += 1
-        retry if failure < MAX_TRY
-        raise "cannot generate tempfile `%s'" % tmpname
-      ensure
-        Thread.critical = false
-      end
+          Dir.mkdir(lock)
+        rescue
+          failure += 1
+          retry if failure < MAX_TRY
+          raise "cannot generate tempfile `%s'" % tmpname
+        end
+      }
 
       @data = [tmpname]
       @clean_proc = Tempfile.callback(@data)

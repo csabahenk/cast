@@ -59,18 +59,6 @@ set_func(StringLiteral, val);
 #define RET(sym)      {p->cur = cursor; rb_ary_store(p->token, 0, sym); rb_ary_store(p->token, 1, sym  ); return;}
 #define RETVALUE(sym) {p->cur = cursor; rb_ary_store(p->token, 0, sym); rb_ary_store(p->token, 1, value); return;}
 
-/* Raise a ParseError.  `s' is the format string for the exception
- * message, which must contain exactly one '%s', which is replaced by
- * the string delimited by `b' and `e'.
- */
-static void error1(char *s, char *b, char *e) {
-  char *str;
-  str = ALLOCA_N(char, e - b + 1);
-  memcpy(str, b, e-b);
-  str[e-b] = '\0';
-  rb_raise(cast_eParseError, s, str);
-}
-
 /* `token' is assumed to be a two element array, which is filled in.
  */
 void yylex(VALUE self, cast_Parser *p) {
@@ -280,7 +268,7 @@ void yylex(VALUE self, cast_Parser *p) {
 
     any
         {
-            rb_raise(cast_eParseError, "%d: unexpected character: %c (ASCII %d)\n", p->lineno, *p->tok, (int)*p->tok);
+            rb_raise(cast_eParseError, "%ld: unexpected character: %c (ASCII %d)\n", p->lineno, *p->tok, (int)*p->tok);
             goto std;
         }
   */
@@ -298,7 +286,7 @@ void yylex(VALUE self, cast_Parser *p) {
         {
             if (cursor == p->eof)
               rb_raise(cast_eParseError,
-                       "%d: unclosed multiline comment",
+                       "%ld: unclosed multiline comment",
                        p->lineno);
         }
 

@@ -452,10 +452,9 @@ module C
       newfield.index = fields.length
       fields << newfield
       # getter
-      # define_method(newfield.reader) do
-      #   instance_variable_get(newfield.var)
-      # end
-      eval "def #{newfield.reader}; #{newfield.var}; end"
+      define_method(newfield.reader) do
+        instance_variable_get(newfield.var)
+      end
       # setter
       if newfield.child?
         define_method(newfield.writer) do |val|
