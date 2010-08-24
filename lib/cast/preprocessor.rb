@@ -1,4 +1,5 @@
 require 'rbconfig'
+require 'tempfile'
 
 ######################################################################
 #
@@ -27,8 +28,8 @@ module C
     end
     def preprocess(text)
       filename = nil
-      Tempfile.open('cast-preprocessor-input.',
-                    File.expand_path(pwd || '.'), '.c') do |file|
+      Tempfile.open(['cast-preprocessor-input.', '.c'],
+                    File.expand_path(pwd || '.')) do |file|
         filename = file.path
         file.puts text
       end

@@ -1,5 +1,4 @@
 require "cast_ext.so"
-require "cast/tempfile.rb"
 require "cast/preprocessor.rb"
 require "cast/node.rb"
 require "cast/node_list.rb"
