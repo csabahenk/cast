@@ -72,8 +72,9 @@ end
 # Gem spec
 spec = Gem::Specification.new do |s|
   s.name = 'cast'
-  s.summary = "C parser and AST constructor."
-  s.version = '0.1.0'
+  s.summary = "C to AST"
+  s.description = "C parser and AST constructor."
+  s.version = '0.1.1'
   s.author = 'George Ogata'
   s.email = 'george.ogata@gmail.com'
   s.homepage = 'http://cast.rubyforge.org'
@@ -82,7 +83,6 @@ spec = Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.extensions << 'ext/extconf.rb'
   s.files = FILES.to_a
-  s.autorequire = 'cast'
   #s.test_file = 'test/run.rb'
   s.has_rdoc = false
 end
